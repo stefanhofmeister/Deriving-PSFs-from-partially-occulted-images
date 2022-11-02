@@ -276,7 +276,7 @@ def solve_system_of_equations(config, iteration):
                     rmse.append(np.sqrt(np.nanmean((Y_pred - Y_evaluation_dataset[i, :])**2 * weights_evaluation_dataset[i, :]**2)))
         
              
-        if fit_function == 'multilinear_reg_cpu':
+        if fit_function == 'multilinear_regularization_cpu':
                 p0 =np.ones((iterations, n_coeffs), dtype = np.float64)
                 shells_npix[np.isfinite(shells_npix) == 0] = 0
                 for i in range(iterations):
@@ -542,7 +542,7 @@ def solve_system_of_equations(config, iteration):
                   rmse.append(np.sqrt(np.nanmean((Y_pred - Y_evaluation_dataset[i, :])**2 * weights_evaluation_dataset[i, :]**2)))
     
         
-        if fit_function == 'multilinear_reg_gpu':    
+        if fit_function == 'multilinear_regularization_gpu':    
               model_id = gf.ModelID.MULTILINEAR_REG_1024PARAMETERS
     
               estimator_id = gf.EstimatorID.LSE #MLE, LSE
