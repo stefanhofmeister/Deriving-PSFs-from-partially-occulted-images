@@ -113,7 +113,7 @@ def load_psf(config):
         res = resolution
      
     if os.path.isfile(file):
-          psf_original = convert_toimage(file, new_filename = config.folder_run + '/original_psf.jpg', dtype = np.float32, keys = 'psf')
+          psf_original = convert_toimage(file, new_filename = folder_run + '/original_psf.jpg', dtype = np.float32, keys = 'psf')
     else:
           psf_original = np.zeros((res, res), dtype = np.float32) 
           psf_original[res//2, res//2] = 1.
