@@ -21,7 +21,9 @@ def convert_toimage(file, new_filename = '', dtype = np.float32, normalize = Fal
     file_extension = os.path.splitext(file)[1]
     if (file_extension.lower() == '.fit') or (file_extension.lower() == '.fits') or (file_extension.lower() == '.fts'):
         with fits.open(file) as hdu:
-            img = hdu[0].data
+          for i_ext in range(len(hdu)):
+              img = hdu[i_ext].data
+              if isinstance(img, np.ndarray): break
     elif (file_extension.lower() == '.npz'):
         img = np.load(file)['img']
     elif (file_extension.lower() == '.npy'):
