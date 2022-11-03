@@ -34,12 +34,15 @@ def deconvolve_images(config):
              # Deconvolve the image with the PSF, and check if the deconvolution did converge. If the number of iterations is set to a too large value and it does not converge, it can produce nan values or very large and small values. If it did not converge, redo the deconvolution with less iterations.
              while True:
                    img_deconvolved = deconvolve_richardson_lucy(img, psf, iterations = n_iterations, use_gpu = use_gpu, pad = pad, large_psf = large_psf)
-                   if np.isfinite(img_deconvolved.sum()): break
+                   if np.all(np.isfinite(img_deconvolved)): break
                    else: n_iterations //= 2
                    if n_iterations < 1: sys.exit('PSF deconvolution did not converge.' )
 
-         save_image(img_deconvolved, folder_run + '/deconvolved_image/' +  os.path.basename(file), dtype = np.float16, keys = 'img')
-
+         img_deconvolved = img_deconvolved.astype(np.float16) #by setting the datatype to np.float16, all values > 6.55040e+04 are set to inf. As the intensities in the original images were normalized to 0 - 1e4, this allows for PSFs that scatters maximal about 85% of the photons. But it is also the best location to check if the PSF has converged.
+         if np.all(np.isfinite(img_deconvolved)):
+             save_image(img_deconvolved, folder_run + '/deconvolved_image/' +  os.path.basename(file), dtype = np.float16, keys = 'img')
+         else:
+             print('{} created NaNs during PSF deconvolution. Skipping the file.'.format(os.path.basename(file)))
 
 def deconvolve_richardson_lucy(img, psf, iterations=25, use_gpu = True, pad = True, large_psf = False):
     """
