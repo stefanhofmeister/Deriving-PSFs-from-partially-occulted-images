@@ -31,7 +31,7 @@ def derive_importance_mask(config):
             files = glob.glob(folder_run + '/distance_from_illuminated_edge/*.npz')
             for file in files:
                 distances = np.load(file)['dists_from_illuminated_edge'].astype(dtype = np.float16)
-                occultation_mask = read_image(folder_run + '/occultation_mask/' + os.path.basename(file), dtype = np.bool8)
+                occultation_mask = read_image(folder_run + '/occultation_mask/' + os.path.basename(file), dtype = np.int8)
                 mask_important_regions = np.full(distances.shape, -1)
                 for i in range(len(distance_edges) -1):
                     region = (distances >= distance_edges[i]) & (distances < distance_edges[i+1]) & (occultation_mask == 1)
@@ -44,8 +44,9 @@ def derive_importance_mask(config):
             files = glob.glob(folder_run + '/occultation_mask/*.npz')
             for file in files:
                 #first, load the needed files
-                occultation_mask = read_image(file, dtype = np.bool8)
+                occultation_mask = read_image(file, dtype = np.int8)
                 illumination_mask = np.float32(occultation_mask == 0)
+                exclude = (occultation_mask == -1)
                 dists, angles = read_image(folder_run + '/distance_from_illuminated_edge/' + os.path.basename(file), keys = ['dists_from_illuminated_edge', 'angles_from_illuminated_edge'], dtype = np.float16)
                 psf_segments =  np.load(folder_run + '/psf_segmentation/psf_segments.npz', allow_pickle=True)   
                 shells_fov = psf_segments['indices_fov']
@@ -82,6 +83,7 @@ def derive_importance_mask(config):
                         importance_mask_for_segment = convolve_image(illumination_mask, mask_psf_segment, use_gpu = use_gpu, pad = True, large_psf = large_psf)
                         #get the important regions for that segments: set the illuminated region to zero as it will anyway not be used, and identify the important region by a threshold of 0.5 (as the fourier based convolution results in very small numbers of not-important regions instead of zeros)
                         importance_mask_for_segment[illumination_mask == 1] = 0
+                        importance_mask_for_segment[exclude == 1] = 0
                         importance_mask_for_segment[importance_mask_for_segment > 0.5] = 1
                         importance_mask_array[i, importance_mask_for_segment == 1] = shells['index'][index_segment]    
                     #Having the array of importance masks that are related to the given radial distance, we now look where they overlap, and draw from these one index by random.
