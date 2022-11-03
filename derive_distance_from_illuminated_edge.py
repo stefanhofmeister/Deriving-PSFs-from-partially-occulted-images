@@ -17,16 +17,17 @@ from inout import read_image, save_image
 def derive_distance_from_illuminated_edge(config):
     folder_run = config['general']['folder_run']
     files = glob.glob(folder_run + '/occultation_mask/*.npz')
-    for file in files:
-        occultation_mask = read_image(file, dtype = np.bool8)
+     for file in files:
+        occultation_mask = read_image(file, dtype = np.int8)
+        exclude           = (occultation_mask == -1)
         illumination_mask = (occultation_mask == 0)
-        illuminated_edge = np.where( occultation_mask ^ morph.binary_erosion(occultation_mask)) # The ^ is the xor operator
+        occultation_mask  = (occultation_mask == 1)
+        illuminated_edge  = np.where( (illumination_mask & morph.binary_dilation(occultation_mask)) & (exclude == 0) ) # The ^ is the xor operator
         mask_of_wanted_distances = np.ones(illumination_mask.shape, dtype = np.bool8)
         dists, angles = derive_dist_from_edge(mask_of_wanted_distances, np.array(illuminated_edge))  #this function needs numpy arrays as input (limitation of numba), but np.where gives a list of tuples. Thus, convert it to a numpy array.
         filename =  folder_run + '/distance_from_illuminated_edge/' + os.path.basename(file)
         save_image([dists, angles], filename, plot_norm = 'log', keys = ['dists_from_illuminated_edge', 'angles_from_illuminated_edge'], dtype = np.float16)
-   
-
+    
 #derive the distance from the illuminated edge. To do so, we use a growing edges algorithm. We start at the illuminated edge, and let it grow. In each growth step, we derive the distance of the pixels in the new growth band to the illuminated edge. 
 #This can be most easily achieved by not deriving the distance directly, but the distance in x and y direction to the illuminated edge separately. This allows to take the distance of the preceeding growth band as a-priori knwon true distances, and thereby to derive the new distances iteratively from the known distances of the last band.
 @njit
