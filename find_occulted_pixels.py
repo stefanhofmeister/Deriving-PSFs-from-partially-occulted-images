@@ -29,7 +29,7 @@ def find_occulted_pixels(config):
                 use_median = config['occultation_mask']['threshold_usemedian'] 
                 occultation_mask = find_occulted_pixels_bythr(img, thr, use_median)
                 
-        save_image(occultation_mask, folder_run + '/occultation_mask/' + os.path.basename(file), plot_norm = 'lin', dtype = np.int8, keys = 'img')
+            save_image(occultation_mask, folder_run + '/occultation_mask/' + os.path.basename(file), plot_norm = 'lin', dtype = np.int8, keys = 'img')
 
 
 #In this section, you can put your own algorithms to identify occulted pixels. The function should use the (psf deconvolved) image "img" as input, and return a numpy array with a zero background and the pixels identified as occulted set to one.
