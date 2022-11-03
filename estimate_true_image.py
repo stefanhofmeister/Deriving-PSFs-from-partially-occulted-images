@@ -17,7 +17,7 @@ def estimate_true_image(config):
     files = glob.glob(folder_run + '/deconvolved_image/*.npz')
     for file in files:
         img_dec = read_image(file, dtype = np.float16)
-        occ_mask = read_image(folder_run + '/occultation_mask/' + os.path.basename(file), dtype = np.bool8)
+        occ_mask = read_image(folder_run + '/occultation_mask/' + os.path.basename(file), dtype = np.int8)
         img_approx_true  = img_dec
-        img_approx_true[occ_mask] = 0
+        img_approx_true[occ_mask == 1] = 0
         save_image(img_approx_true, folder_run + '/approximated_true_image/' + os.path.basename(file), dtype = np.float16, plot_norm = 'log')
