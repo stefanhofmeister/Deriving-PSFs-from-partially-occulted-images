@@ -67,8 +67,8 @@ def plot_image(img, filename, plot_norm = 'log', cmap = 'viridis', plot_range = 
         vmin = plot_range[0]
         vmax = plot_range[1]
     else:
-        vmin = np.nanmin(img[img>0])
-        vmax = np.nanmax(img)
+        if plot_norm == 'log': vmin = np.nanmin(img[img>0])
+        if plot_norm == 'lin': vmin = np.nanmin(img)        vmax = np.nanmax(img)
     if plot_norm == 'log': im = ax.imshow(img, norm=LogNorm(vmin=vmin, vmax=vmax, clip = True), interpolation = 'nearest', cmap = cmap)
     if plot_norm == 'lin': im = ax.imshow(img, norm = Normalize(vmin = vmin, vmax = vmax, clip = True), interpolation = 'nearest', cmap = cmap) 
     fig.colorbar(im, cax=cax, orientation='vertical')
