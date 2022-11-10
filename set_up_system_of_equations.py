@@ -43,8 +43,11 @@ def set_up_system_of_equations(config):
     indices_fov_flipped = np.flip(indices_fov) 
     
     #find the image pixels and their weighting which contribute to the center pixel when a convolution with the psf is applied by flipping the psf   
-    psf_existing = read_image(folder_run + '/original_psf.npz', dtype = np.float32)
-    psf_existing_flipped = np.flip(psf_existing)      
+    if config['general']['file_psf_existing'] != '':
+        psf_existing = read_image(folder_run + '/original_psf.npz', dtype = np.float32)
+    else:
+        psf_existing = np.zeros((resolution, resolution), dtype = np.float32)
+    psf_existing_flipped = np.flip(psf_existing) 
     
     #create file and folder definitions    
     folder_out =                    folder_run + '/system_of_equations/'
