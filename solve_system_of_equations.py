@@ -827,8 +827,8 @@ def draw_samples(datacube, file_indices, n_occulted, n_illuminatededge, n_illumi
               random.extend(np.random.choice(mask_occulted[px_in_index], int(n_random)))
             
     #we add random pixels from the illuminated edge and illumianted region
-    random.extend(np.random.choice(len(mask_illuminatededge) , int(n_illuminatededge))) 
-    random.extend(np.random.choice(len(mask_illuminated), int(n_illuminated)))
+    random.extend(np.random.choice(mask_illuminatededge, int(n_illuminatededge))) 
+    random.extend(np.random.choice(mask_illuminated, int(n_illuminated)))
     
     #finally, we create a subdatacube and return it
     subdatacube = {}
