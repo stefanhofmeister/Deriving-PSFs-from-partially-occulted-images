@@ -16,6 +16,9 @@ from inout import read_image, save_image
 def find_occulted_pixels(config):
     folder_run = config['general']['folder_run']
     method     = config['occultation_mask']['method']
+    if 'add_distance' in config['occultation_mask']: add_distance = config['occultation_mask']['add_distance']
+    else: add_distance = 0
+
 
     #if occultation masks have been predefined
     if method != 'predefined':  #if the occultation masks have not been predefined and provided by the user: derive the occultation masks
@@ -28,6 +31,14 @@ def find_occulted_pixels(config):
                 thr        = config['occultation_mask']['threshold']
                 use_median = config['occultation_mask']['threshold_usemedian'] 
                 occultation_mask = find_occulted_pixels_bythr(img, thr, use_median)
+            
+            if add_distance > 0:  
+                kernel_size = 2 * np.floor(add_distance).astype(np.int) + 1
+                kx, ky = np.meshgrid(np.arange(kernel_size) - kernel_size//2, np.arange(kernel_size) - kernel_size//2)
+                kr = kx**2 + ky**2
+                kernel = np.zeros((kernel_size, kernel_size))
+                kernel[kr <= add_distance**2] = 1
+                occultation_mask = ndimage.binary_erosion(occultation_mask.astype(np.int8), structure=kernel.astype(np.int8))
                 
             save_image(occultation_mask, folder_run + '/occultation_mask/' + os.path.basename(file), plot_norm = 'lin', dtype = np.int8, keys = 'img')
 
