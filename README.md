@@ -1,5 +1,5 @@
 # Deriving-PSFs-from-partially-occulted-images
-"""© 2022 The Trustees of Columbia University in the City of New York. 
+© 2022 The Trustees of Columbia University in the City of New York. 
 This work may be reproduced, distributed, and otherwise exploited for 
 academic non-commercial purposes only, provided that it cites the original work: 
 
@@ -8,6 +8,6 @@ academic non-commercial purposes only, provided that it cites the original work:
 
 To obtain a license to use this work for commercial purposes, please contact 
 Columbia Technology Ventures at techventures@columbia.edu <mailto:techventures@columbia.edu>. 
-"""
+
 
 An installation instruction and manual is located in the wiki of this repository.
