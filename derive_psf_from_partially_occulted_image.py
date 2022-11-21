@@ -78,5 +78,5 @@ def derive_psf_from_partially_occulted_image(config_in):
         print('Finalizing')
         finalize(config)  
         
-        print('The result can be foudn in {}'.format(config['general']['folder_run']))
+        print('The result can be found in {}'.format(config['general']['folder_run']))
             
