@@ -21,8 +21,9 @@ def create_psf(config):
     large_psf = config['general']['large_psf']
     
     if 'file_psf' in config['testrun']:
-        file_psf = config['testrun']['file_psf']
-        psf = convert_toimage(file_psf, dtype = np.float32, save = False) 
+        if config['testrun']['file_psf'] != '':
+            file_psf = config['testrun']['file_psf']
+            psf = convert_toimage(file_psf, dtype = np.float32, save = False) 
     
     if 'PSF_shape' in config['testrun']:
         shape = config['testrun']['PSF_shape']
