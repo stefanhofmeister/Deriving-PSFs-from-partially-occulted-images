@@ -42,9 +42,11 @@ def find_occulted_pixels(config):
                 kernel = np.zeros((kernel_size, kernel_size))
                 kernel[kr <= add_distance**2] = 1
                 #do a binary erosion but with edge mode = 'nearest'
+                mask_ignore = (occultation_mask == -1)
                 occultation_mask = np.logical_not(occultation_mask)
                 occultation_mask = ndimage.convolve(occultation_mask.astype(np.int8), kernel.astype(np.int8), mode = 'nearest')
-                occultation_mask = np.logical_not(occultation_mask)
+                occultation_mask = np.logical_not(occultation_mask).astype(np.int8)
+                occultation_mask[mask_ignore] = -1
                 
             save_image(occultation_mask, folder_run + '/occultation_mask/' + os.path.basename(file), plot_norm = 'lin', dtype = np.int8, keys = 'img')
 
