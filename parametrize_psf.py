@@ -113,7 +113,7 @@ def parametrize_psf(config):
     #in the manual segmentation file, all pixel values <= are ignored. Each value > 0 is an index for the segmentation map, i.e., all pixels with the same value belong to the same segment.
     if psf_discretization_file:
         segments = read_image(folder_run + os.path.splitext(os.path.basename(psf_discretization_file))[0] + '.npz' )
-        mask_disc = (segments > 0)
+        mask_disc = (segments != -1)
         indices = np.unique(segments[mask_disc])
         n_manual_shells = len(indices)
         manual_shells = {'index': np.full(n_manual_shells, -1, dtype = np.int32), 'npix': np.full(n_manual_shells, 0, dtype = np.int32), 'radius_mean_px': np.full(n_manual_shells, np.nan, dtype = np.float16), 'radius_min_px': np.full(n_manual_shells, np.nan, dtype = np.float16), 'radius_max_px': np.full(n_manual_shells, np.nan, dtype = np.float16), 'angle_mean': np.full(n_manual_shells, np.nan, dtype = np.float16), 'angle_min': np.full(n_manual_shells, np.nan, dtype = np.float16), 'angle_max': np.full(n_manual_shells, np.nan, dtype = np.float16)}
