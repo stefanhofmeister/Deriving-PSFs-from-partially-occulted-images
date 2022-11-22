@@ -17,7 +17,7 @@ from inout import convert_toimage, save_image
   
  
 user_provided_files = [{'fname': 'files_occulted',    'config_key': 'general',            'dir': 'original_image',   'shall_be_array': True,  'normalize': True, 'dtype': np.float32 }, 
-                       {'fname': 'occ_file',          'config_key': 'occultation_mask',   'dir': 'occultation_mask', 'shall_be_array': True,  'normalize': False, 'dtype': np.bool8   },
+                       {'fname': 'occ_file',          'config_key': 'occultation_mask',   'dir': 'occultation_mask', 'shall_be_array': True,  'normalize': False, 'dtype': np.int8   },
                        {'fname': 'importance_file',   'config_key': 'importance_mask',    'dir': 'importance_mask',  'shall_be_array': True,  'normalize': False, 'dtype': np.int32   },
                        {'fname': 'psfdisc_file',      'config_key': 'psf_discretization', 'dir': '',                 'shall_be_array': False, 'normalize': False, 'dtype': np.int32   },
                        {'fname': 'file_psf_existing', 'config_key': 'general',            'dir': '',                 'shall_be_array': False, 'normalize': False, 'dtype': np.float32 }, 
