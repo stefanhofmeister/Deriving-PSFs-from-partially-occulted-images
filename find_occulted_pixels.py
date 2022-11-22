@@ -22,8 +22,14 @@ def find_occulted_pixels(config):
     if 'add_distance' in config['occultation_mask']: add_distance = config['occultation_mask']['add_distance']
     else: add_distance = 0
 
-
     #if occultation masks have been predefined
+    if method == 'predefined':
+        files = glob.glob(folder_run + '/occultation_mask/*.npz')
+        for file in files:
+            occultation_mask = read_image(file, dtype = np.int8)
+            plot_image(occultation_mask, file, plot_norm = 'lin') 
+            
+    #if the occultation masks have not been predefined and provided by the user: derive the occultation masks
     if method != 'predefined':  #if the occultation masks have not been predefined and provided by the user: derive the occultation masks
         #derive the occultation masks
         files = glob.glob(folder_run + '/deconvolved_image/*.npz')
