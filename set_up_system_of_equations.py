@@ -350,6 +350,10 @@ def create_indices_fromfov(indices_fov):  #indices_flipped array into a list, wh
                 indices.append([x, y, -1, indices_fov[x, y]])   #create a new element in indices
                 index_last = indices_fov[x, y]                  #and update index last
         indices[-1][2] = y                                      #close the last element
-    return np.array(indices)
-            
+        
+        #remove all elements that correspond to and index of -1
+        indices =  np.array(indices)
+        valid = (indices[:, 3] != -1)
+        indices = indices[:, valid]
+        return indices            
 
