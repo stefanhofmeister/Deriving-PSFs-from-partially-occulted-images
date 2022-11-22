@@ -11,9 +11,9 @@ Columbia Technology Ventures at techventures@columbia.edu <mailto:techventures@c
 
 
 import numpy as np
-from PIL import Image
+import os
 from matplotlib import cm
-from inout import plot_image
+from inout import read_image, plot_image
 
 
 def parametrize_psf(config):
@@ -112,7 +112,7 @@ def parametrize_psf(config):
     #if a manual discretization file was provided, use the segments defined there to overwrite the shells and shell segments defined before. This allows to stack a manual segmentation, e.g., for the diffraction pattern, with simple shells.
     #in the manual segmentation file, all pixel values <= are ignored. Each value > 0 is an index for the segmentation map, i.e., all pixels with the same value belong to the same segment.
     if psf_discretization_file:
-        segments = np.array(Image.open(psf_discretization_file))
+        segments = read_image(folder_run + os.path.splitext(os.path.basename(psf_discretization_file))[0] + '.npz' )
         mask_disc = (segments > 0)
         indices = np.unique(segments[mask_disc])
         n_manual_shells = len(indices)
