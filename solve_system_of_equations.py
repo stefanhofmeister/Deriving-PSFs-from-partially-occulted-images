@@ -591,13 +591,13 @@ def solve_system_of_equations(config, iteration):
                   coeff.append(parameters[i , :])
                   rmse.append(np.sqrt(np.nanmean((Y_pred - Y_evaluation_dataset[i, :])**2 * weights_evaluation_dataset[i, :]**2)))
       
-    #Having done the fitting, we create an array of structures with all the fitted cofficients and associated RMSEs.
-    coeff_rmse_for_each_iteration =  [ dict({'coeff': a, 'rmse': b}) for a, b in zip(coeff, rmse) ] 
- 
     #undo the normalization
     if 'cpu' in fit_function:
         coeff = np.array(coeff) / xscale
-
+    
+    #Having done the fitting, we create an array of structures with all the fitted cofficients and associated RMSEs.
+    coeff_rmse_for_each_iteration =  [ dict({'coeff': a, 'rmse': b}) for a, b in zip(coeff, rmse) ] 
+ 
     #We derive the mean coefficients from all the fits as final fit result. If requested, we use only the fits associated with the best fraction of the RMSEs to calculate the mean coefficients.
     if iterations > 1:
         coeff = np.array(coeff)
