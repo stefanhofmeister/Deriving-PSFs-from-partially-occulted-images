@@ -65,7 +65,7 @@ def set_up_system_of_equations(config):
     for file in files:
           try:
               #read in the deconvolved map and the mask
-              occ_mask          = read_image(folder_occultation_masks + os.path.basename(file) , dtype = np.bool8)
+              occ_mask          = read_image(folder_occultation_masks + os.path.basename(file) , dtype = np.int8)
               illumination_mask = (occ_mask == 0)
               importance_mask   = read_image(folder_importance_masks + os.path.basename(file) , dtype = np.int16)
               distances         = np.load(folder_distances + os.path.basename(file))['dists_from_illuminated_edge'].astype(dtype = np.float16)
