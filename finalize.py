@@ -43,6 +43,7 @@ def finalize(config):
     ax2.set_yscale('log')
     ax2.set_xscale('symlog')
     ax2.set_xlim([-0.1, resolution//2])
+    if 'psf_plot_range' in config['finalizing']: ax2.set_ylim(config['finalizing']['psf_plot_range'])
     ax2.set_xlabel('Distance from PSF center [px]')
     ax2.set_ylabel('PSF weight')
     ax2.spines['right'].set_visible(False)
