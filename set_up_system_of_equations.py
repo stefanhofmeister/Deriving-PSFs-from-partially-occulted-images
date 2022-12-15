@@ -111,7 +111,7 @@ def set_up_system_of_equations(config):
                            px_2d = (px_x, px_y)     
                                      
                       else:
-                          px_2d = np.where(occ_mask == 1)
+                           px_2d = np.where((occ_mask == 1) & (importance_mask != -1))
                           
                   if process == 'illuminated_edge':
                       px_2d = []
