@@ -21,8 +21,9 @@ def parametrize_psf(config):
     resolution = config['general']['resolution']
     large_psf  = config['general']['large_psf']
 
-    psf_discretization_file = config['psf_discretization']['psfdisc_file']
-
+    if 'psfdisc_file' in config['psf_discretization']: psf_discretization_file = config['psf_discretization']['psfdisc_file']
+    else:                                              psf_discretization_file = ''
+        
     #usually, the PSF kernel is the same size as the image. However, this only allows light to be scattered by half of the image size. If set to true, double the size of the PSF so that scattered light over the full image range is allowed.
     if large_psf:
         resolution *= 2
