@@ -354,6 +354,6 @@ def create_indices_fromfov(indices_fov):  #indices_flipped array into a list, wh
         #remove all elements that correspond to and index of -1
         indices =  np.array(indices)
         valid = (indices[:, 3] != -1)
-        indices = indices[:, valid]
+        indices = indices[valid, :]
         return indices            
 
