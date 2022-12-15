@@ -41,16 +41,6 @@ def find_occulted_pixels(config):
             thr        = config['occultation_mask']['threshold']
             use_median = config['occultation_mask']['threshold_usemedian'] 
             occultation_mask = find_occulted_pixels_bythr(img, thr, use_median)
-            
-        if method == 'eclipse':                  
-            #derive the occultation masks by fitting a circle to the eclipse
-            img = read_image(file, dtype = np.float16)  
-            # thr        = config['occultation_mask']['threshold']
-            # use_median = config['occultation_mask']['threshold_usemedian'] 
-            # occultation_mask = find_occulted_pixels_byeclipse(img, thr, use_median)
-            occultation_mask = fit_eclipse( config, file, thr_eclipse =0.10, morph_radius = 5, distance_from_eclipse_boundary = 20, low_resolution_for_fit = 4096, high_resolution_for_fit = 4096, erosion = 0) 
-            # occultation_mask[occultation_mask > 0] = 1
-            # occultation_mask[(occultation_mask <= 0) & (occultation_mask != -1)] = 0
 	                      
         if add_distance > 0:  
             kernel_size = 2 * np.floor(add_distance).astype(np.int) + 1
