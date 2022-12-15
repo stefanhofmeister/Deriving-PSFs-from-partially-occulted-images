@@ -178,6 +178,9 @@ def assemble_psf(config):
             
     #put the smoothed result in psf_fitted_smoothed
     psf_fitted_smoothed = psf_fitted
+    
+    #return the gaps into the psf
+    psf_fitted_smoothed[gaps == 1] = 0.
 
     # reinsert the manual shells that have not been smoothed
     for i, coeff_tmp in enumerate(coeff):
