@@ -47,8 +47,8 @@ def parametrize_psf(config):
         inner['radius_max'] = np.sqrt(2) * resolution + 1
         if 'radius_inner_outer_boundary' in config['psf_discretization']:
             inner['radius_max'] =  config['psf_discretization']['radius_inner_outer_boundary']
-        index_rad_min = [i for i,v in enumerate(inner['shells_edges']) if v >inner['radius_min']][0] -1
-        index_rad_max = [i for i,v in enumerate(inner['shells_edges']) if v <inner['radius_max']][-1] +1
+        index_rad_min = [i for i,v in enumerate(inner['shells_edges']) if v >=inner['radius_min']][0]
+        index_rad_max = [i for i,v in enumerate(inner['shells_edges']) if v <=inner['radius_max']][-1]
         inner['shells_edges'] = inner['shells_edges'][index_rad_min : index_rad_max +1] 
         inner['n_shells'] = len(inner['shells_edges']) -1
         if 'shell_segments' in inner['shape']: inner['shell_segments_angle'] = config['psf_discretization']['width_segments_angle']
@@ -63,8 +63,8 @@ def parametrize_psf(config):
             outer['shells_edges'] = config['psf_discretization']['outer_radius_segments_edges'] 
             outer['radius_min'] = config['psf_discretization']['radius_inner_outer_boundary']
             outer['radius_max'] = np.sqrt(2) * resolution + 1
-            index_rad_min = [i for i,v in enumerate(outer['shells_edges']) if v >outer['radius_min']][0] -1
-            index_rad_max = [i for i,v in enumerate(outer['shells_edges']) if v <outer['radius_max']][-1] +1
+            index_rad_min = [i for i,v in enumerate(outer['shells_edges']) if v > outer['radius_min']][0]
+            index_rad_max = [i for i,v in enumerate(outer['shells_edges']) if v <=outer['radius_max']][-1]
             outer['shells_edges'] = outer['shells_edges'][index_rad_min : index_rad_max +1] 
             outer['n_shells'] = len(outer['shells_edges']) -1
             if 'outer_shell_segments' in outer['shape']: outer['shell_segments_angle'] = config['psf_discretization']['outer_width_segments_angle']
