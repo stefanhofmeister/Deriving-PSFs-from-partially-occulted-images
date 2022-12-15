@@ -38,12 +38,13 @@ def convert_toimage(file, new_filename = '', dtype = np.float32, normalize = Fal
         save_image(img, new_filename, plot_norm =plot_norm, dtype = dtype, keys = keys)
     return img
 
-def save_image(img, filename, plot_norm = 'log', plot_range = None, dtype = np.float32, keys = 'img'):
+def save_image(img, filename, plot = True, plot_norm = 'log', plot_range = None, dtype = np.float32, keys = 'img'):
     #saves a 2d numpy array, i.e., an image. Multiple images can be saved at once if 'keys' is given.
     if isinstance(keys, str): 
         keys = [keys]
         img = [img]
-    plot_image(img[0], filename, plot_norm = plot_norm, plot_range = plot_range)
+    if plot:
+        plot_image(img[0], filename, plot_norm = plot_norm, plot_range = plot_range)
     save_dict = {}
     for i in range(len(img)): 
         save_dict[keys[i]] = img[i].astype(dtype)
