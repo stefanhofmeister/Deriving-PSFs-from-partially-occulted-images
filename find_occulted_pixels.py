@@ -32,7 +32,7 @@ def find_occulted_pixels(config):
         #here, you can also define your own methods for finding the occulted pixels
         if method == 'predefined':        
             #if the occultation mask has been provided by the user
-            occultation_mask = read_image(file, dtype = np.int8)
+            occultation_mask = convert_toimage(file, dtype = np.int8, save = False)
             img = read_image(folder_run + '/deconvolved_image/' + os.path.splitext(os.path.basename(file))[0] + '.npz')
             
         if method == 'threshold':            
