@@ -155,9 +155,10 @@ def solve_system_of_equations(config, iteration):
         #normalize the X data. This is required to get reasonable termination condition for the fit, i.e., when it assumes to be converged. This will also affect the values of the fitted coefficients; consequently, the normalization will be reversed after the fitting (i.e., at the end of this program)
         if 'cpu' in fit_function:
                 file_coeffs = folder_run + '/fitted_psf_coefficients/fitted_coefficients.npz'
-                if os.path.isfile(file_coeffs): xscale = 1./ np.load(file_coeffs)['coeff'].astype(np.float32)
-                else:                           xscale = (shells_radii_px.astype(np.float32))**2 
+                if os.path.isfile(file_coeffs): xscale = 1./ np.load(file_coeffs)['coeff']
+                else:                           xscale = (shells_radii_px.astype(np.float64))**2
                 xscale *= 1e6
+                xscale = xscale.astype(np.float32)
                 xscale[(np.isfinite(xscale) == 0) | (xscale == 0.)] = 1
                 X_training_dataset /= xscale
                 X_evaluation_dataset /= xscale
