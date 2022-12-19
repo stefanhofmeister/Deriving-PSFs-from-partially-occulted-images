@@ -22,30 +22,31 @@ def derive_importance_mask(config):
         folder_run = config['general']['folder_run']
         large_psf  = config['general']['large_psf']    
         use_gpu    = config['general']['use_gpu']
+        if 'min_dist' in config['importance_mask']: min_dist = config['importance_mask']['min_dist']
+        else:                                       min_dist = 0
+        if 'max_dist' in config['importance_mask']: max_dist = config['importance_mask']['max_dist']
+        else:                                       max_dist = 0
         
-        if config['importance_mask']['method'] == 'predefined':
-            for file in config['importance_mask']['importance_file']:
-                convert_toimage(file, folder_run + '/importance_mask/' + os.path.basename(file), dtype = np.int16, plot_norm = 'lin')
-                
-        if config['importance_mask']['method'] == 'distances':
-            #create the importance mask from the distances of the illuminated edges. Basically, this is just a segmentation of the distance_from_illuminated_edge map (which was already derived earlier) into segments given by config_importancemask['distance_edges'].
-            distance_edges = config['importance_mask']['distance_edges']
-           
-            files = glob.glob(folder_run + '/distance_from_illuminated_edge/*.npz')
-            for file in files:
+        if config['importance_mask']['method'] == 'predefined':         files = config['importance_mask']['importance_file']
+        if config['importance_mask']['method'] == 'distances':          files = glob.glob(folder_run + '/distance_from_illuminated_edge/*.npz')
+        if config['importance_mask']['method'] == 'psf segmentation':   files = glob.glob(folder_run + '/occultation_mask/*.npz')
+
+        for file in files:
+            if config['importance_mask']['method'] == 'predefined':
+                importance_mask = convert_toimage(file, folder_run + '/importance_mask/' + os.path.basename(file), dtype = np.int16, plot_norm = 'lin')
+    
+            if config['importance_mask']['method'] == 'distances':
+                #create the importance mask from the distances of the illuminated edges. Basically, this is just a segmentation of the distance_from_illuminated_edge map (which was already derived earlier) into segments given by config_importancemask['distance_edges'].
+                distance_edges = config['importance_mask']['distance_edges']
                 distances = np.load(file)['dists_from_illuminated_edge'].astype(dtype = np.float16)
                 occultation_mask = read_image(folder_run + '/occultation_mask/' + os.path.basename(file), dtype = np.int8)
-                mask_important_regions = np.full(distances.shape, -1)
+                importance_mask = np.full(distances.shape, -1)
                 for i in range(len(distance_edges) -1):
                     region = (distances >= distance_edges[i]) & (distances < distance_edges[i+1]) & (occultation_mask == 1)
-                    mask_important_regions[region] = i
-                save_image(mask_important_regions, folder_run + '/importance_mask/' + os.path.basename(file), plot_norm = 'lin', dtype = np.int32)
-     
-        
-        if config['importance_mask']['method'] == 'psf segmentation':
-            #here, we define the importance mask by the psf segmentation. This should allow to get a good distribution of pixels for both asymmetric PSFs and diffraction patterns, but it is slow.
-            files = glob.glob(folder_run + '/occultation_mask/*.npz')
-            for file in files:
+                    importance_mask[region] = i         
+            
+            if config['importance_mask']['method'] == 'psf segmentation':
+                #here, we define the importance mask by the psf segmentation. This should allow to get a good distribution of pixels for both asymmetric PSFs and diffraction patterns, but it is slow.
                 #first, load the needed files
                 occultation_mask = read_image(file, dtype = np.int8)
                 illumination_mask = np.float32(occultation_mask == 0)
@@ -95,48 +96,15 @@ def derive_importance_mask(config):
                 #For the manual shells, which are meant to contain the diffraction pattern, we derive the important pixels by their distance and angle to the illuminated parts. Here, we do not have to care anymore about overlaps.
                 for i in range(len(manual_shells['index'])):
                     importance_mask[(dists >= manual_shells['radius_min'][i]) &  (dists <= manual_shells['radius_max'][i]) &  (angles >= manual_shells['angle_min'][i]) &  (angles <= manual_shells['angle_max'][i]) & (occultation_mask == 1)] = manual_shells['index'][i]
-                #Finally, save the result
-                save_image(importance_mask, folder_run + '/importance_mask/' + os.path.basename(file), plot_norm = 'lin', dtype = np.int32)
-
-
-
-
             
-        # if config['importance_mask']['method'] == 'psf_segmentation': 
-        #     files = glob.glob(folder_run + '/occultation_mask/*.npz')
-        #     for file in files:
-        #         occultation_mask = read_image(file, dtype = np.bool8)
-        #         illumination_mask = (occultation_mask == 0)
-        #         #derive the importance mask. It tells for each psf segment which occulted pixels are most important to fit the psf
-        #         #to do so, create a psf segment mask for each psf segment, and convolve the occultation mask with that psf segment mask
-        #         #first, load the psf segments
-        #         psf_segments = np.load(folder_run + '/psf_segmentation/psf_segments.npz', allow_pickle = True)
-        #         shells_fov = psf_segments['indices_fov']
-        #         shells_indices, shells_npix, shells_radii_px = ( np.append(psf_segments['shells'].item()['index'], psf_segments['manual_shells'].item()['index']),
-        #                                       np.append(psf_segments['shells'].item()['npix'], psf_segments['manual_shells'].item()['npix']),
-        #                                       np.append(psf_segments['shells'].item()['radius_mean_px'], psf_segments['manual_shells'].item()['radius_mean_px']))
-        #         n_shellsegments, n_shells, n_manual_shells = psf_segments['n_shellsegments'], psf_segments['n_shells'], psf_segments['n_manual_shells']
-                
-        #         #order the segments by distance from the psf center and by the number of pixels in the segments. Remove empty segments from that list.
-        #         alternate_shellsegments = np.append(np.meshgrid(np.arange(n_shellsegments), np.arange(n_shells))[0].transpose().flatten() % 2, np.zeros(n_manual_shells))
-        #         sort = np.lexsort((shells_radii_px, shells_npix, alternate_shellsegments)) 
-        #         sort = sort[shells_npix[sort] != 0]
-        #         shells_indices, shells_npix, shells_radii_px = shells_indices[sort], shells_npix[sort], shells_radii_px[sort]                
-                
-        #         mask_important_regions = np.full(occultation_mask.shape, -1)
-        #         #now, create the individual psf segment masks and convolve the illumination mask with this psf segment mask. Start with the largest segments far from the PSF center, and go to the smaller ones; by that, the results of the larger ones will be partially overwritten by the smaller ones and not vice versa.
-        #         for index in reversed(shells_indices):
-        #             #get a mask of the psf segment associated with index
-        #             mask_psf_segment = (shells_fov == index)
-        #             #convolve the illumination mask with the mask of the individual psf segment
-        #             importance_mask_for_segment = convolve_image(illumination_mask.astype(np.float32), mask_psf_segment.astype(np.float32), use_gpu = use_gpu, pad = True, large_psf = large_psf)
-        #             #get the important regions for that segments: set the illuminated region to zero as it will anyway not be used, and identify the important region by a threshold of 0.5 (as the fourier based convolution results in very small numbers of not-important regions instead of zeros)
-        #             importance_mask_for_segment[illumination_mask == 1] = 0
-        #             importance_mask_for_segment[importance_mask_for_segment > 0.5] = 1
-        #             #set the important regions in the overall importance mask
-        #             mask_important_regions[importance_mask_for_segment == 1] = index
-        #         save_image(mask_important_regions, folder_run + '/importance_mask/' + os.path.basename(file), plot_norm = 'lin', dtype = np.int16)
-                    
+            if min_dist or max_dist:
+                distances = np.load( folder_run + '/distance_from_illuminated_edge/{:}.npz'.format( os.path.splitext(os.path.basename(file))[0] ) )['dists_from_illuminated_edge'].astype(dtype = np.float16)
+                if min_dist: importance_mask[distances < min_dist] = -1
+                if max_dist: importance_mask[distances > max_dist] = -1
+
+            #Finally, save the result
+            save_image(importance_mask, folder_run + '/importance_mask/' + os.path.basename(file), plot_norm = 'lin', dtype = np.int32)
+       
 @njit                    
 def choose_random_index(array, from_array):
     #from_array is a 3d array of shape (n_images, x_image, y_image). array is of shape (x_image, y_image).
@@ -152,9 +120,4 @@ def choose_random_index(array, from_array):
     return array
 
 
-                   
-
-                    
-                    
-                    
-                    
+  
