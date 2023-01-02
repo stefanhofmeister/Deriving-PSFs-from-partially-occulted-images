@@ -100,9 +100,16 @@ def create_artificial_image(config):
     signaltonoise = config['testrun']['occmask_signaltonoise'] 
     
     psf = read_image(folder_run + '/true_image_and_psf/true_psf.npz', dtype = np.float32)
-    #create the artificial images
-    occultation_mask = create_occultation_mask(config)
-    image_true = create_true_image(occultation_mask)    
+    #create the artificial images   
+    if 'file_occulted' in config['testrun']:
+        if config['testrun']['file_occulted'] != '':
+            file_occulted = config['testrun']['file_occulted']
+            image_true = convert_toimage(file_occulted, dtype = np.float32, save = False) 
+            occultation_mask = (image_true == 0)
+    else:
+        occultation_mask = create_occultation_mask(config)
+        image_true = create_true_image(occultation_mask)    
+    
     image_observed = convolve_image(image_true.astype(np.float32), psf.astype(np.float32), use_gpu = use_gpu, pad = True, large_psf = large_psf).astype(np.float32) #need to redefine the datatype, as it gets lost in the convolution   
     image_observed = add_noise(image_observed, occultation_mask, signaltonoise) 
     save_image(image_true, folder_run + '/true_image_and_psf/true_image.jpg', plot_norm = 'lin', dtype = np.float32)
