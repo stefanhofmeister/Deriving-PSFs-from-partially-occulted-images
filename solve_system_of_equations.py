@@ -71,7 +71,7 @@ def solve_system_of_equations(config, iteration):
     #load the psf segmentation
     psf_segments        = np.load(folder_run + '/psf_segmentation/psf_segments.npz', allow_pickle=True)    
     n_coeffs            = psf_segments['n_shells'] + psf_segments['n_manual_shells']
-    shells_npix         =  np.array([*psf_segments['shells'].item()['npix'], *psf_segments['manual_shells'].item()['npix']])
+    shells_npix_orig    =  np.array([*psf_segments['shells'].item()['npix'], *psf_segments['manual_shells'].item()['npix']])
     shells_radii_px     =  np.array([*psf_segments['shells'].item()['radius_mean_px'], *psf_segments['manual_shells'].item()['radius_mean_px']])
     shells_radii_px_min =  np.array([*psf_segments['shells'].item()['radius_min_px'], *psf_segments['manual_shells'].item()['radius_min_px']])
     shells_radii_px_max =  np.array([*psf_segments['shells'].item()['radius_max_px'], *psf_segments['manual_shells'].item()['radius_max_px']])
@@ -151,7 +151,7 @@ def solve_system_of_equations(config, iteration):
         Y_diff_evaluation_dataset = np.array([dc['intensities_explained'] for dc in datacubes_evaluation], dtype = np.float32)
         weights_evaluation_dataset = np.array([dc['weights']              for dc in datacubes_evaluation], dtype = np.float32)
     
-        shells_npix = np.array(shells_npix, dtype = np.float32)
+        shells_npix_orig = np.array(shells_npix_orig, dtype = np.float32)
         #normalize the X data. This is required to get reasonable termination condition for the fit, i.e., when it assumes to be converged. This will also affect the values of the fitted coefficients; consequently, the normalization will be reversed after the fitting (i.e., at the end of this program)
         if 'cpu' in fit_function:
                 file_coeffs = folder_run + '/fitted_psf_coefficients/fitted_coefficients.npz'
@@ -162,7 +162,9 @@ def solve_system_of_equations(config, iteration):
                 xscale[(np.isfinite(xscale) == 0) | (xscale == 0.)] = 1
                 X_training_dataset /= xscale
                 X_evaluation_dataset /= xscale
-                shells_npix /= xscale
+                shells_npix = shells_npix_orig / xscale
+        else:
+                shells_npix = shells_npix_orig
 
         
         #finally perform the fitting
