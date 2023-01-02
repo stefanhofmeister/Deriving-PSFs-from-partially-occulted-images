@@ -107,14 +107,15 @@ def create_artificial_image(config):
             file_occulted = config['testrun']['file_occulted']
             image_true = convert_toimage(file_occulted, dtype = np.float32, save = False) 
             occultation_mask = (image_true == 0)
+            filename = os.path.basename(file_occulted)
     else:
         occultation_mask = create_occultation_mask(config)
         image_true = create_true_image(occultation_mask)    
-    
+        filename = 'image.jpg'
     image_observed = convolve_image(image_true.astype(np.float32), psf.astype(np.float32), use_gpu = use_gpu, pad = True, large_psf = large_psf).astype(np.float32) #need to redefine the datatype, as it gets lost in the convolution   
     image_observed = add_noise(image_observed, occultation_mask, signaltonoise) 
-    save_image(image_true, folder_run + '/true_image_and_psf/true_image.jpg', plot_norm = 'lin', dtype = np.float32)
-    save_image(image_observed, folder_run + '/original_image/image.jpg', plot_norm = 'log', dtype = np.float32)
+    save_image(image_true, folder_run + '/true_image_and_psf/true_' + filename, plot_norm = 'lin', dtype = np.float32)
+    save_image(image_observed, folder_run + '/original_image/' + filename, plot_norm = 'log', dtype = np.float32)
 
 
 def create_occultation_mask(config):
