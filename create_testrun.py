@@ -97,8 +97,9 @@ def create_artificial_image(config):
     folder_run = config['general']['folder_run']
     large_psf = config['general']['large_psf']
     use_gpu = config['general']['use_gpu']
-    signaltonoise = config['testrun']['occmask_signaltonoise'] 
-    
+    if 'occmask_signaltonoise' in config['testrun']: signaltonoise = config['testrun']['occmask_signaltonoise'] 
+    else:                                            signaltonoise = 0
+        
     psf = read_image(folder_run + '/true_image_and_psf/true_psf.npz', dtype = np.float32)
     #create the artificial images   
     if 'file_occulted' in config['testrun']:
