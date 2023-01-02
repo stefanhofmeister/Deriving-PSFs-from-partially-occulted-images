@@ -188,9 +188,10 @@ def assemble_psf(config):
             psf_fitted_smoothed[indices_fov == i] = coeff_tmp
    
     #combine the newly fitted psf with the existing one. Note that if no psf was provided to work with, psf_orig will be an array of zeros with the center coefficient set to one. This results in that also the center cofficient is derived here in the correct way.
-    totalweight_fitted = np.sum(psf_fitted_smoothed)
+    totalweight_fitted = np.sum(psf_fitted_smoothed) - psf_fitted_smoothed[512, 512]
     psf_new =  psf_orig * (1. - totalweight_fitted) + psf_fitted_smoothed
-    psf_new /= np.sum(psf_new)
+    psf_new[512, 512] = 1. - (np.sum(psf_new) - psf_new[512, 512])
+    psf_new /= np.sum(psf_new)   
     
     #finally, double_check if the center coefficient is reasonable. In particular in the first iteration of our algorithm, it can happen that the center coefficient has not the maximum value of the psf, since the approximation of the true image is still bad. In that case, having an entirely wrong center coefficient can result that the deconvolution does not converge in the next iteration and that the algorithm breaks. Thus, in that case, rescale the PSF and set the center coefficient to a reasonable one. Latest after a few iterations, the algorithm will converge and this conditional rescaling will not be applied anymore.
     if psf_new[resolution//2, resolution//2] < np.max(psf_new): 
