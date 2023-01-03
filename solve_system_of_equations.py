@@ -600,7 +600,7 @@ def solve_system_of_equations(config, iteration):
         coeff = np.array(coeff) / xscale
     
     #Having done the fitting, we create an array of structures with all the fitted cofficients and associated RMSEs.
-    coeff_rmse_for_each_iteration =  [ dict({'coeff': a, 'rmse': b, 'percentage_scattered': c}) for a, b, c in zip(coeff, rmse, np.sum(coeff * shells_npix_orig, axis = 1)) ]       
+    coeff_rmse_for_each_iteration =  [ dict({'coeff': a, 'rmse': b, 'percentage_scattered': c}) for a, b, c in zip(coeff, rmse, np.nansum(coeff * shells_npix_orig, axis = 1)) ]       
  
     #We derive the mean coefficients from all the fits as final fit result. If requested, we use only the fits associated with the best fraction of the RMSEs to calculate the mean coefficients.
     if iterations > 1:
