@@ -65,7 +65,8 @@ def solve_system_of_equations(config, iteration):
     if (iteration < 2) and ('1-2_piecewise_min_dist' in config['fitting']):          piecewise_min_dist = config['fitting']['1-2_piecewise_min_dist']
     elif 'piecewise_min_dist' in config['fitting']:                                  piecewise_min_dist = config['fitting']['piecewise_min_dist']
     else:                                                                            piecewise_min_dist = 3
-  
+    if 'x_scaling_factor' in config['fitting']:                                      x_scaling_factor = config['fitting']['x_scaling_factor']
+    else:                                                                            x_scaling_factor = 1e5
     
 
     #load the psf segmentation
@@ -157,7 +158,7 @@ def solve_system_of_equations(config, iteration):
                 file_coeffs = folder_run + '/fitted_psf_coefficients/fitted_coefficients.npz'
                 if os.path.isfile(file_coeffs): xscale = 1./ np.load(file_coeffs)['coeff']
                 else:                           xscale = (shells_radii_px.astype(np.float64))**2
-                xscale *= 1e6
+                xscale *= x_scaling_factor 
                 xscale = xscale.astype(np.float32)
                 xscale[(np.isfinite(xscale) == 0) | (xscale == 0.)] = 1
                 X_training_dataset /= xscale
