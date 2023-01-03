@@ -76,6 +76,7 @@ config['fitting'] = {
    'fit_repetition_chunksize':       10,
    'tolerance':                      1e-5, 
    'max_iter':                       100000,
+   'x_scaling_factor':               1e5,
    'piecewise_min_samples': 10,
    'piecewise_min_dist': 10,
    'piecewise_min_coeff': 10} 
