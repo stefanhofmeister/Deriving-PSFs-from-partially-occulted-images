@@ -50,6 +50,7 @@ def set_up_system_of_equations(config):
         psf_existing = read_image(folder_run + '/original_psf.npz', dtype = np.float32)
     else:
         psf_existing = np.zeros((resolution, resolution), dtype = np.float32)
+        psf_existing[resolution//2, resolution//2] = 1.
     psf_existing_flipped = np.flip(psf_existing) 
     
     #create file and folder definitions    
