@@ -603,7 +603,7 @@ def solve_system_of_equations(config, iteration):
     coeff_rmse_for_each_iteration =  [ dict({'coeff': a, 'rmse': b, 'percentage_scattered': c}) for a, b, c in zip(coeff, rmse, np.nansum(coeff * shells_npix_orig, axis = 1)) ]       
  
     #We derive the mean coefficients from all the fits as final fit result. If requested, we use only the fits associated with the best fraction of the RMSEs to calculate the mean coefficients.
-    if iterations > 1:
+    if coeff.shape[0] > 1:
         coeff = np.array(coeff)
         rmse = np.array(rmse)
         rmse_ind_sorted = rmse.argsort()
