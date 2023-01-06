@@ -53,7 +53,7 @@ def solve_system_of_equations(config, iteration):
     else:                                                                            split_training_evaluation = 1
     if 'best_fraction' in config['fitting']:                                         best_fraction = config['fitting']['only_use_best_fraction']
     else:                                                                            best_fraction = 1.
-    if 'regularization' in fit_function:                                             alpha = config['fitting']['regularization_alpha']
+    if'regularization_alpha' in fit_function:                                        alpha = config['fitting']['regularization_alpha']
     if 'fit_repetition_chunksize' in config['fitting']:                              chunksize = config['fitting']['fit_repetition_chunksize']
     else:                                                                            chunksize = total_iterations
     if (iteration < 2) and ('1-2_piecewise_min_samples' in config['fitting']):       piecewise_min_samples = config['fitting']['1-2_piecewise_min_samples']
