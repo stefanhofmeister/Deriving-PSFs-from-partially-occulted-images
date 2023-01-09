@@ -33,7 +33,7 @@ def convert_toimage(file, new_filename = '', dtype = np.float32, normalize = Fal
     else:
         img = Image.open(file)
     img = np.array(img)
-    if normalize: img = img / np.max(img) * 10000.
+    if normalize: img = img / np.nanmax(img) * 10000.
     if save:
         save_image(img, new_filename, plot_norm =plot_norm, dtype = dtype, keys = keys)
     return img
