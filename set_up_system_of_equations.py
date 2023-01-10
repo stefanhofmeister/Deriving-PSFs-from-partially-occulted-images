@@ -86,6 +86,7 @@ def set_up_system_of_equations(config):
                            #first, we derive how many indices we have in our importance mask, how many pixels in the importance mask each index covers, and we sort the values in ascending order, i.e., the indices containing a small number of pixels first.
                            indices_in_importancemask = np.unique(importance_mask[importance_mask != -1])
                            n_importancemask_indices = len(indices_in_importancemask)
+                           if n_importancemask_indices == 0: return
                            n_importancemask_px_per_index = np.array([ np.sum(importance_mask == index) for index in indices_in_importancemask ])
                            sort = np.argsort(n_importancemask_px_per_index)
                            indices_in_importancemask, n_importancemask_px_per_index = indices_in_importancemask[sort], n_importancemask_px_per_index[sort]
