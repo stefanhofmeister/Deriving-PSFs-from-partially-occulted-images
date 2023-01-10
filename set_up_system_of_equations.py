@@ -97,7 +97,7 @@ def set_up_system_of_equations(config):
                                small_segments = np.where(n_importancemask_px_per_index < px_per_bin)[0]
                                n_small_importancemask_segments = len(small_segments)
                                n_px_in_small_importancemask_segments = np.sum(n_importancemask_px_per_index[small_segments])
-                               if px_per_bin == px_per_bin_last: break
+                               if (px_per_bin == px_per_bin_last) or (n_importancemask_indices == n_small_importancemask_segments): break
                                else: px_per_bin_last = px_per_bin
                                
                            #finally, we draw the pixels. For the small segments, we just use all the pixels. For large semgents, we draw px_per_bin pixels.
