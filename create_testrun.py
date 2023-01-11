@@ -158,6 +158,7 @@ def create_true_image(occultation_mask):
 
 def add_noise(img, occultation_mask, signaltonoise = 0):
     if signaltonoise != 0:
+        img[img < 0] = 0
         signal = np.mean(img[occultation_mask == 1])
         noise = signal / signaltonoise 
         img[:, :] =  np.round(np.random.poisson(img[:, :] / noise) * noise)
